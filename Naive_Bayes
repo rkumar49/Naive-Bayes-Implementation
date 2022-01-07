@@ -1,0 +1,71 @@
+import csv
+import argparse
+import math
+import numpy as np
+
+def NaiveBayes():
+    args = parser.parse_args()
+    file = args.data
+    instance_Of_A,instance_Of_B,data,counter = [],[],[],0
+    with open(file) as csvfile:
+        my_reader = csv.reader(csvfile, delimiter=',')
+
+        for row in my_reader:
+            data.append(row)
+            if (row[0]=='A'):
+                instance_Of_A.append(row)
+            if (row[0]=='B'):
+                instance_Of_B.append(row)
+
+        def expectation(Array, instance):
+            sum=0
+            for i in range(0,len(Array),1):
+                sum=sum+float(Array[i][instance])
+            mean = float(sum/len(Array))
+            return mean
+
+        def variance(Array, instance):
+            sum = 0
+            for i in range(0,len(Array),1):
+                sum = sum+float(((float(Array[i][instance]) - float(expectation(Array, instance)))**2))
+            var = float((1/(len(Array)-1))*sum)
+            return var
+
+
+        Mean1_A = expectation(instance_Of_A, 1)
+        Mean2_A = expectation(instance_Of_A, 2)
+        Mean1_B = expectation(instance_Of_B, 1)
+        Mean2_B = expectation(instance_Of_B, 2)
+        Variance1_A = variance(instance_Of_A, 1)
+        Variance2_A = variance(instance_Of_A, 2)
+        Variance1_B = variance(instance_Of_B, 1)
+        Variance2_B = variance(instance_Of_B, 2)
+        Probability_A = float(len(instance_Of_A)/len(data))
+        Probability_B = float(len(instance_Of_B)/len(data))
+
+        for i in range(len(data)):
+            Gauss2_Probability_A_1 = (1/(2*math.pi* Variance1_A)**0.5)*math.exp(-(((float(data[i][1])-Mean1_A)**2)/(2*Variance1_A)))
+            Gauss2_Probability_A_2 = (1/(2*math.pi* Variance2_A)**0.5)*math.exp(-(((float(data[i][2])-Mean2_A)**2)/(2*Variance2_A)))
+            Gauss2_Probability_B_1 = (1/(2*math.pi* Variance1_B)**0.5)*math.exp(-(((float(data[i][1])-Mean1_B)**2)/(2*Variance1_B)))
+            Gauss2_Probability_B_2 = (1/(2*math.pi* Variance2_B)**0.5)*math.exp(-(((float(data[i][2])-Mean2_B)**2)/(2*Variance2_B)))
+
+            Priori_A = Gauss2_Probability_A_1 * Gauss2_Probability_A_2 * Probability_A
+            Priori_B = Gauss2_Probability_B_1 * Gauss2_Probability_B_2 * Probability_B
+
+            if (Priori_A > Priori_B):
+                if (data[i][0] != 'A'):
+                    counter += 1
+            else:
+                if (data[i][0] != 'B'):
+                    counter += 1
+
+        result1 = str(Mean1_A) + ',' + str(Variance1_A) + ',' + str(Mean2_A) + ',' + str(Variance2_A) + ',' + str(Probability_A)
+        print(result1)
+        result2 = str(Mean1_B) + ',' + str(Variance1_B) + ',' + str(Mean2_B) + ',' + str(Variance2_B) + ',' + str(Probability_B)
+        print(result2)
+        print(counter)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--data", help="Data File")
+    NaiveBayes()
