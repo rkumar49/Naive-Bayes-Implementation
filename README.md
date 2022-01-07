@@ -6,7 +6,7 @@
 
 
 
-Given are the two data sets on Moodle named Example and Gauss2 as csv files. Your
+Given are the two data sets  named Example and Gauss2 as csv files. Your
 program should be able to read both data sets and treat the first value of each line as the
 class (A or B). The output of your algorithm on the console should be comma separated
 values per data set, which contains a row for each class.
